@@ -17,9 +17,9 @@ class ChemLabBasicTest extends TestCase
         $response = $this->get('/');
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => 
-            $page->component('welcome')
-        );
+        $response->assertViewIs('welcome');
+        $response->assertSee('ChemLab');
+        $response->assertSee('Laboratory Equipment Management System');
     }
 
     public function test_dashboard_requires_authentication(): void
@@ -39,11 +39,9 @@ class ChemLabBasicTest extends TestCase
         $response = $this->actingAs($user)->get('/dashboard');
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => 
-            $page->component('dashboard')
-                ->has('user')
-                ->has('stats')
-        );
+        $response->assertViewIs('dashboard');
+        $response->assertViewHas('user');
+        $response->assertViewHas('stats');
     }
 
     public function test_laboratory_model_relationships(): void
@@ -107,10 +105,7 @@ class ChemLabBasicTest extends TestCase
         $response = $this->actingAs($user)->get('/laboratories');
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => 
-            $page->component('laboratories/index')
-                ->has('laboratories')
-                ->has('laboratories.data', 3)
-        );
+        $response->assertViewIs('laboratories.index');
+        $response->assertViewHas('laboratories');
     }
 }

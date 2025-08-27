@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreLaboratoryRequest;
 use App\Http\Requests\UpdateLaboratoryRequest;
 use App\Models\Laboratory;
-use Inertia\Inertia;
+
 
 class LaboratoryController extends Controller
 {
@@ -21,7 +21,14 @@ class LaboratoryController extends Controller
         ->latest()
         ->paginate(12);
 
-        return Inertia::render('laboratories/index', [
+        // Add equipment count for each laboratory
+        $laboratories->getCollection()->transform(function ($lab) {
+            $equipmentCount = $lab->equipment !== null ? $lab->equipment->count() : 0;
+            $lab->setAttribute('equipment_count', $equipmentCount);
+            return $lab;
+        });
+
+        return view('laboratories.index', [
             'laboratories' => $laboratories
         ]);
     }
@@ -31,7 +38,7 @@ class LaboratoryController extends Controller
      */
     public function create()
     {
-        return Inertia::render('laboratories/create');
+        return view('laboratories.create');
     }
 
     /**
@@ -58,7 +65,7 @@ class LaboratoryController extends Controller
             }]);
         }]);
 
-        return Inertia::render('laboratories/show', [
+        return view('laboratories.show', [
             'laboratory' => $laboratory
         ]);
     }
@@ -68,7 +75,7 @@ class LaboratoryController extends Controller
      */
     public function edit(Laboratory $laboratory)
     {
-        return Inertia::render('laboratories/edit', [
+        return view('laboratories.edit', [
             'laboratory' => $laboratory
         ]);
     }

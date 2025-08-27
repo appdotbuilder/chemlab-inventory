@@ -8,7 +8,7 @@ use App\Models\Laboratory;
 use App\Models\LoanRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
+
 
 class DashboardController extends Controller
 {
@@ -45,15 +45,9 @@ class DashboardController extends Controller
             $stats['myPendingRequests'] = LoanRequest::where('user_id', $user->id)->pending()->count();
         }
 
-        return Inertia::render('dashboard', [
+        return view('dashboard', [
             'stats' => $stats,
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'role' => $user->role,
-                'status' => $user->status,
-                'email' => $user->email,
-            ]
+            'user' => $user
         ]);
     }
 }
